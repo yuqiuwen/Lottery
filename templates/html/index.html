@@ -1,0 +1,151 @@
+{% extends './html/base.html' %}
+
+{#<div class="container-fluid">#}
+{% block box1 %}
+<div class="card-deck" style="margin: 20px 0">
+<div class="card shadow bg-white rounded">
+    <div class="card-body">
+      <h5 class="card-title">Hello</h5>
+      <p class="card-text">
+          <i class="bi bi-emoji-kiss"></i>  xixixixi</p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+    </div>
+  </div>
+    <div class="card shadow bg-white rounded">
+    <div class="card-body">
+      <h5 class="card-title">Today {{ cur_time }}</h5>
+      <p class="card-text">
+              {% if latest %}
+                {% for i in latest%}
+                    {% if loop.index0!=6 %}
+                        <span class="badge badge-danger" style="font-size:16px; width:35px; height:35px;line-height: 30px; text-align:center;border-radius:100%">{{ i }}</span>
+                    {% else %}
+                        <span class="badge badge-primary" style="font-size:16px; width:35px; height:35px;line-height: 30px; text-align:center;border-radius:100%">{{ i }}</span>
+                     {% endif %}
+                {%endfor%}
+            {% endif %}
+      </p>
+      <p class="card-text"><small class="text-muted">Latest: {{ date }}</small></p>
+    </div>
+  </div>
+    <div class="card shadow bg-white rounded">
+    <div class="card-body">
+      <h5 class="card-title">AI Forecasting</h5>
+      <p class="card-text">
+          <button type="button" class="btn btn-dark" onclick="predict()">
+              <i class="bi bi-hand-index-thumb" ></i> Try it</button>&nbsp; &nbsp;
+            {% for i in ['red1', 'red2', 'red3', 'red4', 'red5', 'red6']%}
+                <span class="badge badge-danger" id="{{ i }}" style="font-size:16px; width:35px; height:35px;line-height: 30px; text-align:center;border-radius:100%"></span>
+                {%endfor%}
+            <span class="badge badge-primary" id="blue" style="font-size:16px;height:35px; width:35px;line-height: 30px;  text-align:center;border-radius:100%"></span>
+
+
+
+          <span class="badge badge-primary"></span>
+            <script type="text/javascript">
+                var predict_res = []
+                function predict(){
+                    $.ajax({
+                        type: "GET",
+                        url: "http://127.0.0.1:5000/predict",
+                        data:"",
+                        async : false,
+                        dataType: 'json',
+                        success: function (result) {
+                            let res = result.predict_res
+                            let cols = ['red1', 'red2', 'red3', 'red4', 'red5', 'red6', 'blue']
+                            for(let i in res) {
+                                $("#"+cols[i]).text(res[i]);
+                            }
+
+                }
+                    })
+                }
+            </script>
+      </p>
+        <p class="card-text">
+
+        </p>
+      <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+    $(
+            function () {
+                get_latest();
+            }
+        );
+
+        function get_latest() {
+            $.ajax({
+                type: "GET",
+                url: {{ HOST }} + "latest",
+                dataType: 'json',
+                async :false,
+                success: function (result) {
+                    return result
+                }
+            });
+        }
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+    <div style="margin: 15px;">
+    <div id="features" style="width:100%; height:500px;"></div>
+    </div>
+    <script>
+        let chart = echarts.init(document.getElementById('features'), 'light', {renderer: 'canvas'});
+        let url = "{{ menu_id }}", col = "{{ col }}"
+        $(
+            function () {
+                fetchData({{ limit }});
+                {#setInterval(fetchData, 1000*60);#}
+            }
+        );
+
+        function fetchData(limit) {
+            $.ajax({
+                type: "GET",
+                url: url,
+                data:{'limit':limit, 'col': col},
+                dataType: 'json',
+                success: function (result) {
+                    chart.setOption(result);
+                }
+            });
+        }
+
+    </script>
+{% endblock %}
+
+{% block custom_script %}
+<script>
+    let predict_res = []
+    function predict(){
+                    $.ajax({
+                        type: "GET",
+                        url: "http://127.0.0.1:5000/predict",
+                        data:"",
+                        async : false,
+                        dataType: 'json',
+                        success: function (result) {
+                            console.log(result.predict_res)
+                }
+                    })
+                }
+</script>
+{% endblock %}
+
+<style>
+    .ball {
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+        text-align: center;
+        line-height: 30px;
+    }
+</style>

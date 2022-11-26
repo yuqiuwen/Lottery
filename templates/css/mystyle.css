@@ -1,0 +1,7 @@
+.container {
+    margin: 20px;
+    width: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+}
+
