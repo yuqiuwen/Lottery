@@ -1,10 +1,8 @@
 import datetime
+import random
 from typing import List
 import requests
-import numpy as np
-
-from flask import Flask, request, redirect, url_for, render_template, make_response
-from jinja2.utils import markupsafe
+from flask import Flask, request, render_template
 from jinja2 import Environment, FileSystemLoader
 from lxml import etree
 import platform
@@ -14,7 +12,6 @@ from pyecharts.globals import CurrentConfig
 CurrentConfig.GLOBAL_ENV = Environment(loader=FileSystemLoader("./templates"))
 
 from flask_bootstrap import Bootstrap4
-
 from lottery_predict import Lottery
 
 
@@ -105,9 +102,10 @@ def auto_predict():
     random_numbers = []
     for col in cols:
         mod = df[col].mode()[0]
+        # 生成正态分布随机数，loc: 均值，scale: 标准差
         random_numbers.append(round(truncnorm((low - mod) / sd, (high - mod) / sd, loc=mod, scale=sd).rvs(size=1)[0]))
-    blue_mod = df['blue'].mode()[0]
-    random_numbers.append(round(truncnorm((1 - blue_mod) / sd, (15 - blue_mod) / sd, loc=blue_mod, scale=sd).rvs(size=1)[0]))
+    blue_mod = random.randint(1, 16)
+    random_numbers.append(blue_mod)
     return {"predict_res": random_numbers}
 
 
