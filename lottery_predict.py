@@ -61,9 +61,9 @@ class Lottery:
     def draw_trend(self, col: str) -> Grid:
         """绘制各号码走势曲线及出现次数分析"""
         data = self.data
-        page = Page(layout=Page.DraggablePageLayout, page_title='实时彩票分析平台')
-        tab = Tab()
-        start, end = data.index[0].strftime("%Y-%m-%d"), data.index[-1].strftime("%Y-%m-%d")
+        # page = Page(layout=Page.DraggablePageLayout, page_title='实时彩票分析平台')
+        # tab = Tab()
+        # start, end = data.index[0].strftime("%Y-%m-%d"), data.index[-1].strftime("%Y-%m-%d")
 
         color = '#588dd5' if col == 'blue' else '#d0648a'
 
